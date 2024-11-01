@@ -18,12 +18,12 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<Author> listAuthors() {
-        return List.of();
+        return authorRepo.findAll();
     }
 
     @Override
     public Optional<Author> getAuthorById(String id) {
-        return Optional.empty();
+        return authorRepo.findById(id);
     }
 
     @Override
@@ -33,6 +33,6 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void deleteAuthor(String id) {
-
+        authorRepo.deleteById(id);
     }
 }
