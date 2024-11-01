@@ -7,6 +7,7 @@ import com.springp.mongo_spring_prac.repository.AuthorRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,34 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Author createUpdateAuthor(String authorId, CreateUpdateAuthorRequest createUpdateauthorRequest) {
-        return null;
+        return authorRepo.findById(authorId).map(
+                existingAuthor ->{
+                    final Author updateAuthor = Author.builder()
+                            .id(authorId)
+                            .givenName(createUpdateauthorRequest.getGivenName())
+                            .familyName(createUpdateauthorRequest.getFamilyName())
+                            .description(createUpdateauthorRequest.getDescription())
+                            .created(existingAuthor.getCreated())
+                            .lastUpdated(LocalDateTime.now())
+                            .build();
+                    return authorRepo.save(updateAuthor);
+                }
+        ).orElseGet(
+                () -> {
+                    final LocalDateTime now = LocalDateTime.now();
+                    final Author newAuthor = Author.builder()
+                            .id(authorId)
+                            .givenName(createUpdateauthorRequest.getGivenName())
+                            .familyName(createUpdateauthorRequest.getFamilyName())
+                            .description(createUpdateauthorRequest.getDescription())
+                            .created(now)
+                            .lastUpdated(now)
+                            .build();
+                    return authorRepo.save(newAuthor);
+                }
+        );
+
+
     }
 
     @Override
