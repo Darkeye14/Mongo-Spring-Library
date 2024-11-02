@@ -19,6 +19,7 @@ public class Book {
     private String isbn;
     private String title;
     private String authorId;
+    private LocalDateTime created;
     private LocalDate datePublished;
     private LocalDateTime published;
     private LocalDateTime lastUpdated;
