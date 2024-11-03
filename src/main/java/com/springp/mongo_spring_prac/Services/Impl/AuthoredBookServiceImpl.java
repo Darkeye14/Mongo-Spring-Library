@@ -20,8 +20,6 @@ public class AuthoredBookServiceImpl implements AuthoredBookService {
     private final BookRepo bookRepo;
     private final AuthorRepo authorRepo;
 
-
-
     @Override
     public List<AuthoredBook> listBooks() {
         return List.of();
@@ -29,7 +27,16 @@ public class AuthoredBookServiceImpl implements AuthoredBookService {
 
     @Override
     public Optional<AuthoredBook> getBookByIsbn(String isbn) {
-        return Optional.empty();
+        return bookRepo.findById(isbn).map(
+                book -> {
+                    final String authorId = book.getAuthorId();
+                    final Author author = authorRepo.findById(authorId).orElseThrow(() ->
+                            new AuthorNotFoundException(authorId)
+                    );
+
+                    return buildAuthoredBook(book, author);
+                }
+        )
     }
 
     @Override
