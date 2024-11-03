@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +26,21 @@ public class AuthoredBookServiceImpl implements AuthoredBookService {
 
     @Override
     public List<AuthoredBook> listBooks() {
-        return List.of();
+        final List<Book> allBooks = bookRepo.findAll();
+        final List<String> authorIds = allBooks.stream().map(Book::getAuthorId).toList();
+        final List<Author> authors = authorRepo.findAllById(authorIds);
+
+        final Map<String, Author> authorIndex = authors.stream()
+                .collect(Collectors.toMap(Author::getId, author -> author));
+
+        return allBooks.stream().map(book -> {
+            final String authorId = book.getAuthorId();
+            final Author author = authorIndex.get(authorId);
+            if (null == author) {
+                throw new AuthorNotFoundException(authorId);
+            }
+            return buildAuthoredBook(book, author);
+        }).toList();
     }
 
     @Override
