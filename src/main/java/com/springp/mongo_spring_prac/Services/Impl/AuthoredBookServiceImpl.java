@@ -11,6 +11,7 @@ import com.springp.mongo_spring_prac.repository.BookRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,39 @@ public class AuthoredBookServiceImpl implements AuthoredBookService {
 
     @Override
     public AuthoredBook createUpdateBook(String bookIsbn, CreateUpdateBookRequest createUpdateBookRequest) {
-        return null;
+        final String authorId = createUpdateBookRequest.getAuthorId();
+
+        final Optional<Author> existingAuthor = authorRepo.findById(authorId);
+        if (existingAuthor.isEmpty()) {
+            throw new AuthorNotFoundException(authorId);
+        }
+
+        final Book book = bookRepo.findById(bookIsbn).map(existingBook -> {
+
+            final Book updatedBook = Book.builder()
+                    .isbn(bookIsbn)
+                    .title(createUpdateBookRequest.getTitle())
+                    .datePublished(createUpdateBookRequest.getDatePublished())
+                    .authorId(authorId)
+                    .created(existingBook.getCreated())
+                    .lastUpdated(LocalDateTime.now())
+                    .build();
+            return bookRepo.save(updatedBook);
+        }).orElseGet(() -> {
+            // Create a new Book
+            final LocalDateTime now = LocalDateTime.now();
+            final Book newBook = Book.builder()
+                    .isbn(bookIsbn)
+                    .title(createUpdateBookRequest.getTitle())
+                    .datePublished(createUpdateBookRequest.getDatePublished())
+                    .authorId(authorId)
+                    .created(now)
+                    .lastUpdated(now)
+                    .build();
+            return bookRepo.save(newBook);
+        });
+
+        return buildAuthoredBook(book, existingAuthor.get());
     }
 
     @Override
