@@ -5,6 +5,7 @@ import com.springp.mongo_spring_prac.domain.AuthoredBook;
 import com.springp.mongo_spring_prac.domain.CreateUpdateBookRequest;
 import com.springp.mongo_spring_prac.domain.documents.Author;
 import com.springp.mongo_spring_prac.domain.documents.Book;
+import com.springp.mongo_spring_prac.exceptions.AuthorNotFoundException;
 import com.springp.mongo_spring_prac.repository.AuthorRepo;
 import com.springp.mongo_spring_prac.repository.BookRepo;
 import lombok.AllArgsConstructor;
@@ -36,7 +37,7 @@ public class AuthoredBookServiceImpl implements AuthoredBookService {
 
                     return buildAuthoredBook(book, author);
                 }
-        )
+        );
     }
 
     @Override

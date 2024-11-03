@@ -2,7 +2,7 @@ package com.springp.mongo_spring_prac.exceptions;
 
 import lombok.Getter;
 
-public class AuthorNotFoundException extends B{
+public class AuthorNotFoundException extends BookstoreApplication{
     private static final String ERROR_MESSAGE = "An Author with ID '%s' does not exist";
 
     @Getter
