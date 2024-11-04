@@ -49,9 +49,9 @@ public class AuthoredBooksController {
         // Map the returned Book to a presentation layer object and return.
         return bookMapper.mapTo(createUpdatedBook);
     }
-//    @DeleteMapping(path = "/{isbn}")
-//    public void deleteBook(@PathVariable final String isbn) {
-//        authoredBookService.deleteBook(isbn);
-//    }
+    @DeleteMapping(path = "/{isbn}")
+    public void deleteBook(@PathVariable final String isbn) {
+        authoredBookService.deleteBook(isbn);
+    }
 
 }
